@@ -58,7 +58,7 @@ func ExampleClient_CreateTask() {
 }
 
 func ExampleClient_GetMyInfo() {
-	// クライアントの作成  
+	// クライアントの作成
 	client := chatwork.New("YOUR_API_TOKEN")
 	ctx := context.Background()
 

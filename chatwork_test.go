@@ -1,7 +1,6 @@
 package chatwork
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -28,7 +27,7 @@ func TestNew(t *testing.T) {
 func TestNewWithOptions(t *testing.T) {
 	token := "test-token"
 	customHTTPClient := &http.Client{}
-	
+
 	client := New(token, OptionHTTPClient(customHTTPClient))
 
 	if client.client != customHTTPClient {
@@ -38,7 +37,7 @@ func TestNewWithOptions(t *testing.T) {
 
 func TestNewRequest(t *testing.T) {
 	client := New("test-token")
-	
+
 	req, err := client.NewRequest("GET", "test", nil)
 	if err != nil {
 		t.Fatalf("NewRequest returned error: %v", err)
@@ -134,7 +133,7 @@ func TestErrorResponse_Error(t *testing.T) {
 
 func TestTimestamp(t *testing.T) {
 	ts := Timestamp(1609459200) // 2021-01-01 00:00:00 UTC
-	
+
 	timeStr := ts.String()
 	if timeStr == "" {
 		t.Error("Timestamp.String() returned empty string")

@@ -17,11 +17,11 @@ type RoomsService service
 // Name is required. Other fields are optional.
 // Members can be specified with different permission levels.
 type RoomCreateParams struct {
-	Name             string   `url:"name"`
-	Description      string   `url:"description,omitempty"`
-	IconPreset       string   `url:"icon_preset,omitempty"`
-	MembersAdminIDs  []int    `url:"members_admin_ids,comma,omitempty"`
-	MembersMemberIDs []int    `url:"members_member_ids,comma,omitempty"`
+	Name               string `url:"name"`
+	Description        string `url:"description,omitempty"`
+	IconPreset         string `url:"icon_preset,omitempty"`
+	MembersAdminIDs    []int  `url:"members_admin_ids,comma,omitempty"`
+	MembersMemberIDs   []int  `url:"members_member_ids,comma,omitempty"`
 	MembersReadonlyIDs []int  `url:"members_readonly_ids,comma,omitempty"`
 }
 

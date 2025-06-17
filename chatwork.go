@@ -3,7 +3,7 @@
 // The ChatWork API is a RESTful API for ChatWork, a group chat service.
 // This library provides a simple and idiomatic way to interact with the API from Go applications.
 //
-// Usage
+// # Usage
 //
 // Import the package:
 //
@@ -249,7 +249,9 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 
 	if v != nil && resp.StatusCode != http.StatusNoContent {
 		if w, ok := v.(io.Writer); ok {
-			io.Copy(w, resp.Body)
+			if _, err := io.Copy(w, resp.Body); err != nil {
+				return response, fmt.Errorf("failed to copy response body: %w", err)
+			}
 		} else {
 			decErr := json.NewDecoder(resp.Body).Decode(v)
 			if decErr == io.EOF {
@@ -306,7 +308,10 @@ func CheckResponse(r *http.Response) error {
 	errorResponse := &ErrorResponse{Response: r}
 	data, err := io.ReadAll(r.Body)
 	if err == nil && data != nil {
-		json.Unmarshal(data, errorResponse)
+		if err := json.Unmarshal(data, errorResponse); err != nil {
+			// If JSON parsing fails, create a generic error message
+			errorResponse.Errors = []string{fmt.Sprintf("Failed to parse error response: %v", err)}
+		}
 	}
 
 	return errorResponse
