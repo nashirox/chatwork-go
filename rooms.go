@@ -131,13 +131,13 @@ func (s *RoomsService) Update(ctx context.Context, roomID int, params *RoomUpdat
 // ChatWork API docs: https://developer.chatwork.com/reference/delete-rooms-room_id
 func (s *RoomsService) Delete(ctx context.Context, roomID int, actionType string) (*Response, error) {
 	u := fmt.Sprintf("rooms/%d", roomID)
-	
+
 	params := struct {
 		ActionType string `url:"action_type"`
 	}{
 		ActionType: actionType,
 	}
-	
+
 	req, err := s.client.NewFormRequest("DELETE", u, params)
 	if err != nil {
 		return nil, err
@@ -235,13 +235,13 @@ func (s *RoomsService) GetMessagesReadStatus(ctx context.Context, roomID int, me
 // ChatWork API docs: https://developer.chatwork.com/reference/put-rooms-room_id-messages-read
 func (s *RoomsService) MarkMessagesAsRead(ctx context.Context, roomID int, messageID string) (map[string]string, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/messages/read", roomID)
-	
+
 	params := struct {
 		MessageID string `url:"message_id"`
 	}{
 		MessageID: messageID,
 	}
-	
+
 	req, err := s.client.NewFormRequest("PUT", u, params)
 	if err != nil {
 		return nil, nil, err
@@ -287,7 +287,7 @@ func (s *RoomsService) GetFiles(ctx context.Context, roomID int, accountID int) 
 	if accountID > 0 {
 		u += "?account_id=" + strconv.Itoa(accountID)
 	}
-	
+
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
@@ -313,7 +313,7 @@ func (s *RoomsService) GetFile(ctx context.Context, roomID int, fileID int, crea
 	if createDownloadURL {
 		u += "?create_download_url=1"
 	}
-	
+
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
@@ -335,7 +335,7 @@ func (s *RoomsService) GetFile(ctx context.Context, roomID int, fileID int, crea
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-tasks
 func (s *RoomsService) GetTasks(ctx context.Context, roomID int, params *TaskListParams) ([]*Task, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/tasks", roomID)
-	
+
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err

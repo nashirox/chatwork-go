@@ -80,13 +80,13 @@ func (s *TasksService) Get(ctx context.Context, roomID int, taskID int) (*Task, 
 // ChatWork API docs: https://developer.chatwork.com/reference/put-rooms-room_id-tasks-task_id-status
 func (s *TasksService) UpdateStatus(ctx context.Context, roomID int, taskID int, status string) (*Task, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/tasks/%d/status", roomID, taskID)
-	
+
 	params := struct {
 		Body string `url:"body"`
 	}{
 		Body: status,
 	}
-	
+
 	req, err := s.client.NewFormRequest("PUT", u, params)
 	if err != nil {
 		return nil, nil, err

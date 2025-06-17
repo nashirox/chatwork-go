@@ -169,7 +169,7 @@ func (s *MessagesService) SendTo(ctx context.Context, roomID int, accountIDs []i
 	for _, id := range accountIDs {
 		mentions += fmt.Sprintf("[To:%d] ", id)
 	}
-	
+
 	params := &MessageCreateParams{
 		Body: mentions + body,
 	}
@@ -198,13 +198,13 @@ func (s *MessagesService) Quote(ctx context.Context, roomID int, messageID strin
 	}
 
 	// Build the message with quote format
-	quotedBody := fmt.Sprintf("[qt][qtmeta aid=%d time=%d]%s[/qt]\n%s", 
-		message.Account.AccountID, 
+	quotedBody := fmt.Sprintf("[qt][qtmeta aid=%d time=%d]%s[/qt]\n%s",
+		message.Account.AccountID,
 		message.SendTime,
 		message.Body,
 		body,
 	)
-	
+
 	params := &MessageCreateParams{
 		Body: quotedBody,
 	}
@@ -233,11 +233,11 @@ func (s *MessagesService) GetUnreadCount(ctx context.Context, roomID int) (int, 
 	if err != nil {
 		return 0, resp, err
 	}
-	
+
 	if count, ok := result["unread_num"]; ok {
 		return count, resp, nil
 	}
-	
+
 	return 0, resp, nil
 }
 
