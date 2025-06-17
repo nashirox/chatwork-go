@@ -49,9 +49,6 @@ linters:
 linters-settings:
   gofmt:
     simplify: true
-  govet:
-    # Use default configuration for govet
-    # The shadow analyzer is not configured as it can be noisy
   errcheck:
     check-type-assertions: true
     check-blank: true

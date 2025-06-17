@@ -156,7 +156,14 @@ func OptionDebug(debug bool) ClientOption {
 // This method is primarily used internally by service methods,
 // but can be used directly for making custom API requests.
 func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
-	u, err := c.BaseURL.Parse(urlStr)
+	// Build the full URL by joining BaseURL and the relative path
+	baseURL := strings.TrimRight(c.BaseURL.String(), "/")
+	if !strings.HasPrefix(urlStr, "/") {
+		urlStr = "/" + urlStr
+	}
+	fullURL := baseURL + urlStr
+
+	u, err := url.Parse(fullURL)
 	if err != nil {
 		return nil, err
 	}
