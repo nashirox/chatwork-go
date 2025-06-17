@@ -274,7 +274,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	return response, err
 }
 
-// processResponseBody handles the response body parsing logic
+// processResponseBody handles the response body parsing logic.
 func (c *Client) processResponseBody(v interface{}, body io.ReadCloser) error {
 	if w, ok := v.(io.Writer); ok {
 		if _, err := io.Copy(w, body); err != nil {

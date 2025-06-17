@@ -122,7 +122,7 @@ func (s *RoomsService) Update(ctx context.Context, roomID int, params *RoomUpdat
 	return room, resp, nil
 }
 
-// Delete leaves or deletes a room based on the action type.
+// Delete removes a user from a room or deletes the room entirely based on the action type.
 //
 // actionType can be "leave" or "delete":
 // - "leave": Leave the room (any member can do this)
