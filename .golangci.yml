@@ -1,0 +1,98 @@
+# This file configures golangci-lint for the project
+# See https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  tests: true
+  skip-dirs:
+    - vendor
+    - examples
+
+linters:
+  enable:
+    - gofmt
+    - goimports
+    - govet
+    - errcheck
+    - staticcheck
+    - ineffassign
+    - typecheck
+    - unused
+    - gosimple
+    - gosec
+    - misspell
+    - unparam
+    - prealloc
+    - gocritic
+    - godox
+    - whitespace
+    - unconvert
+    - bodyclose
+    - noctx
+    - rowserrcheck
+    - stylecheck
+    - exportloopref
+    - goconst
+    - godot
+    - asciicheck
+    - nestif
+    - nolintlint
+    - exhaustive
+    - sqlclosecheck
+    - nilerr
+    - tparallel
+    - thelper
+    - wastedassign
+    - gofumpt
+    - importas
+    - forcetypeassert
+    - errname
+    - predeclared
+
+linters-settings:
+  gofmt:
+    simplify: true
+  govet:
+    check-shadowing: true
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+  godox:
+    keywords:
+      - TODO
+      - FIXME
+      - HACK
+  nestif:
+    min-complexity: 4
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: true
+  godot:
+    scope: declarations
+    capital: true
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+        - unparam
+
+  # Maximum issues count per one linter. Set to 0 to disable.
+  max-issues-per-linter: 0
+
+  # Maximum count of issues with the same text. Set to 0 to disable.
+  max-same-issues: 0
+
+  # Show only new issues
+  new: false
