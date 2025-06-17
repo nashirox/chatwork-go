@@ -8,13 +8,16 @@ import (
 	"github.com/nashirox/chatwork-go"
 )
 
-func ExampleClient_SendMessage() {
+func ExampleMessagesService_Create() {
 	// クライアントの作成
 	client := chatwork.New("YOUR_API_TOKEN")
 	ctx := context.Background()
 
 	// メッセージの送信
-	resp, _, err := client.Messages.SendMessage(ctx, 123456, "Hello, ChatWork!")
+	params := &chatwork.MessageCreateParams{
+		Body: "Hello, ChatWork!",
+	}
+	resp, _, err := client.Messages.Create(ctx, 123456, params)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,7 +25,7 @@ func ExampleClient_SendMessage() {
 	fmt.Printf("Message sent with ID: %s\n", resp.MessageID)
 }
 
-func ExampleClient_GetRooms() {
+func ExampleRoomsService_List() {
 	// クライアントの作成
 	client := chatwork.New("YOUR_API_TOKEN")
 	ctx := context.Background()
@@ -38,7 +41,7 @@ func ExampleClient_GetRooms() {
 	}
 }
 
-func ExampleClient_CreateTask() {
+func ExampleTasksService_Create() {
 	// クライアントの作成
 	client := chatwork.New("YOUR_API_TOKEN")
 	ctx := context.Background()
@@ -57,8 +60,8 @@ func ExampleClient_CreateTask() {
 	fmt.Printf("Created %d tasks\n", len(resp.TaskIDs))
 }
 
-func ExampleClient_GetMyInfo() {
-	// クライアントの作成  
+func ExampleMeService_Get() {
+	// クライアントの作成
 	client := chatwork.New("YOUR_API_TOKEN")
 	ctx := context.Background()
 

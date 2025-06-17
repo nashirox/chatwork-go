@@ -4,9 +4,6 @@
 run:
   timeout: 5m
   tests: true
-  skip-dirs:
-    - vendor
-    - examples
 
 linters:
   enable:
@@ -31,7 +28,7 @@ linters:
     - noctx
     - rowserrcheck
     - stylecheck
-    - exportloopref
+    - copyloopvar
     - goconst
     - godot
     - asciicheck
@@ -52,8 +49,6 @@ linters:
 linters-settings:
   gofmt:
     simplify: true
-  govet:
-    check-shadowing: true
   errcheck:
     check-type-assertions: true
     check-blank: true
@@ -80,14 +75,6 @@ linters-settings:
     capital: true
 
 issues:
-  exclude-rules:
-    # Exclude some linters from running on tests files.
-    - path: _test\.go
-      linters:
-        - errcheck
-        - gosec
-        - unparam
-
   # Maximum issues count per one linter. Set to 0 to disable.
   max-issues-per-linter: 0
 

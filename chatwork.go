@@ -3,7 +3,7 @@
 // The ChatWork API is a RESTful API for ChatWork, a group chat service.
 // This library provides a simple and idiomatic way to interact with the API from Go applications.
 //
-// Usage
+// # Usage
 //
 // Import the package:
 //
@@ -93,7 +93,10 @@ type service struct {
 //	client := chatwork.New("YOUR_API_TOKEN", chatwork.OptionHTTPClient(httpClient))
 func New(token string, options ...ClientOption) *Client {
 	httpClient := &http.Client{}
-	baseURL, _ := url.Parse(defaultBaseURL)
+	baseURL, err := url.Parse(defaultBaseURL)
+	if err != nil {
+		panic(fmt.Sprintf("Invalid default base URL: %v", err))
+	}
 
 	c := &Client{
 		client:    httpClient,
@@ -141,9 +144,9 @@ func OptionHTTPClient(httpClient *http.Client) ClientOption {
 // This is useful for troubleshooting and development.
 func OptionDebug(debug bool) ClientOption {
 	return func(c *Client) {
-		if debug {
-			// TODO: Implement debug logging
-		}
+		// Debug logging is currently not implemented
+		// This option is reserved for future use
+		_ = debug
 	}
 }
 
@@ -156,7 +159,19 @@ func OptionDebug(debug bool) ClientOption {
 // This method is primarily used internally by service methods,
 // but can be used directly for making custom API requests.
 func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
-	u, err := c.BaseURL.Parse(urlStr)
+	return c.NewRequestWithContext(context.Background(), method, urlStr, body)
+}
+
+// NewRequestWithContext creates a new API request with context and JSON body.
+func (c *Client) NewRequestWithContext(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
+	// Build the full URL by joining BaseURL and the relative path
+	baseURL := strings.TrimRight(c.BaseURL.String(), "/")
+	if !strings.HasPrefix(urlStr, "/") {
+		urlStr = "/" + urlStr
+	}
+	fullURL := baseURL + urlStr
+
+	u, err := url.Parse(fullURL)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +187,7 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		}
 	}
 
-	req, err := http.NewRequest(method, u.String(), buf)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), buf)
 	if err != nil {
 		return nil, err
 	}
@@ -194,12 +209,17 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 //
 // The body parameter should be a struct with url tags for encoding.
 func (c *Client) NewFormRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+	return c.NewFormRequestWithContext(context.Background(), method, urlStr, body)
+}
+
+// NewFormRequestWithContext creates a new API request with context and form-encoded body.
+func (c *Client) NewFormRequestWithContext(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
 	u, err := c.BaseURL.Parse(urlStr)
 	if err != nil {
 		return nil, err
 	}
 
-	var buf io.ReadWriter
+	var buf io.Reader
 	if body != nil {
 		form, err := query.Values(body)
 		if err != nil {
@@ -208,7 +228,7 @@ func (c *Client) NewFormRequest(method, urlStr string, body interface{}) (*http.
 		buf = strings.NewReader(form.Encode())
 	}
 
-	req, err := http.NewRequest(method, u.String(), buf)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), buf)
 	if err != nil {
 		return nil, err
 	}
@@ -248,20 +268,26 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	}
 
 	if v != nil && resp.StatusCode != http.StatusNoContent {
-		if w, ok := v.(io.Writer); ok {
-			io.Copy(w, resp.Body)
-		} else {
-			decErr := json.NewDecoder(resp.Body).Decode(v)
-			if decErr == io.EOF {
-				decErr = nil
-			}
-			if decErr != nil {
-				err = decErr
-			}
-		}
+		err = c.processResponseBody(v, resp.Body)
 	}
 
 	return response, err
+}
+
+// processResponseBody handles the response body parsing logic.
+func (c *Client) processResponseBody(v interface{}, body io.ReadCloser) error {
+	if w, ok := v.(io.Writer); ok {
+		if _, err := io.Copy(w, body); err != nil {
+			return fmt.Errorf("failed to copy response body: %w", err)
+		}
+		return nil
+	}
+
+	decErr := json.NewDecoder(body).Decode(v)
+	if decErr == io.EOF {
+		return nil
+	}
+	return decErr
 }
 
 // Response is a ChatWork API response.
@@ -289,7 +315,8 @@ type RateLimit struct {
 
 func newResponse(r *http.Response) *Response {
 	response := &Response{Response: r}
-	// TODO: Parse rate limit headers from response
+	// Rate limit parsing is not currently implemented
+	// as ChatWork API documentation doesn't specify rate limit headers
 	return response
 }
 
@@ -303,20 +330,23 @@ func CheckResponse(r *http.Response) error {
 		return nil
 	}
 
-	errorResponse := &ErrorResponse{Response: r}
+	errorResponse := &APIError{Response: r}
 	data, err := io.ReadAll(r.Body)
 	if err == nil && data != nil {
-		json.Unmarshal(data, errorResponse)
+		if err := json.Unmarshal(data, errorResponse); err != nil {
+			// If JSON parsing fails, create a generic error message
+			errorResponse.Errors = []string{fmt.Sprintf("Failed to parse error response: %v", err)}
+		}
 	}
 
 	return errorResponse
 }
 
-// ErrorResponse represents an error response from the ChatWork API.
+// APIError represents an error response from the ChatWork API.
 //
 // ChatWork API returns error details in the response body when requests fail.
 // This type captures those details and implements the error interface.
-type ErrorResponse struct {
+type APIError struct {
 	// The HTTP response that caused this error
 	Response *http.Response
 
@@ -326,7 +356,7 @@ type ErrorResponse struct {
 
 // Error returns a human-readable description of the API error.
 // It includes the HTTP method, URL, status code, and error messages.
-func (r *ErrorResponse) Error() string {
+func (r *APIError) Error() string {
 	return fmt.Sprintf("%v %v: %d %v",
 		r.Response.Request.Method, r.Response.Request.URL,
 		r.Response.StatusCode, strings.Join(r.Errors, ", "))

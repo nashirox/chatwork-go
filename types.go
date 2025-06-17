@@ -7,20 +7,20 @@ import "time"
 // Rooms are the primary organizational unit in ChatWork.
 // They can be either group chats, direct messages, or task-specific rooms.
 type Room struct {
-	RoomID         int      `json:"room_id"`
-	Name           string   `json:"name"`
-	Type           string   `json:"type"`
-	Role           string   `json:"role"`
-	Sticky         bool     `json:"sticky"`
-	UnreadNum      int      `json:"unread_num"`
-	MentionNum     int      `json:"mention_num"`
-	MytaskNum      int      `json:"mytask_num"`
-	MessageNum     int      `json:"message_num"`
-	FileNum        int      `json:"file_num"`
-	TaskNum        int      `json:"task_num"`
-	IconPath       string   `json:"icon_path"`
-	LastUpdateTime int64    `json:"last_update_time"`
-	Description    string   `json:"description,omitempty"`
+	RoomID         int    `json:"room_id"`
+	Name           string `json:"name"`
+	Type           string `json:"type"`
+	Role           string `json:"role"`
+	Sticky         bool   `json:"sticky"`
+	UnreadNum      int    `json:"unread_num"`
+	MentionNum     int    `json:"mention_num"`
+	MytaskNum      int    `json:"mytask_num"`
+	MessageNum     int    `json:"message_num"`
+	FileNum        int    `json:"file_num"`
+	TaskNum        int    `json:"task_num"`
+	IconPath       string `json:"icon_path"`
+	LastUpdateTime int64  `json:"last_update_time"`
+	Description    string `json:"description,omitempty"`
 }
 
 // Message represents a message in a ChatWork room.
@@ -80,14 +80,14 @@ type Task struct {
 // This type includes additional room information compared to the regular Task type,
 // making it easier to see tasks across multiple rooms.
 type MyTask struct {
-	TaskID            int          `json:"task_id"`
-	Room              TaskRoom     `json:"room"`
-	AssignedByAccount TaskAccount  `json:"assigned_by_account"`
-	MessageID         string       `json:"message_id"`
-	Body              string       `json:"body"`
-	LimitTime         int64        `json:"limit_time"`
-	Status            string       `json:"status"`
-	LimitType         string       `json:"limit_type"`
+	TaskID            int         `json:"task_id"`
+	Room              TaskRoom    `json:"room"`
+	AssignedByAccount TaskAccount `json:"assigned_by_account"`
+	MessageID         string      `json:"message_id"`
+	Body              string      `json:"body"`
+	LimitTime         int64       `json:"limit_time"`
+	Status            string      `json:"status"`
+	LimitType         string      `json:"limit_type"`
 }
 
 // TaskRoom represents minimal room information associated with a task.

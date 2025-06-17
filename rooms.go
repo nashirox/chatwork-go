@@ -3,7 +3,6 @@ package chatwork
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strconv"
 )
 
@@ -18,11 +17,11 @@ type RoomsService service
 // Name is required. Other fields are optional.
 // Members can be specified with different permission levels.
 type RoomCreateParams struct {
-	Name             string   `url:"name"`
-	Description      string   `url:"description,omitempty"`
-	IconPreset       string   `url:"icon_preset,omitempty"`
-	MembersAdminIDs  []int    `url:"members_admin_ids,comma,omitempty"`
-	MembersMemberIDs []int    `url:"members_member_ids,comma,omitempty"`
+	Name               string `url:"name"`
+	Description        string `url:"description,omitempty"`
+	IconPreset         string `url:"icon_preset,omitempty"`
+	MembersAdminIDs    []int  `url:"members_admin_ids,comma,omitempty"`
+	MembersMemberIDs   []int  `url:"members_member_ids,comma,omitempty"`
 	MembersReadonlyIDs []int  `url:"members_readonly_ids,comma,omitempty"`
 }
 
@@ -123,22 +122,22 @@ func (s *RoomsService) Update(ctx context.Context, roomID int, params *RoomUpdat
 	return room, resp, nil
 }
 
-// Delete leaves or deletes a room based on the action type.
+// Delete performs room deletion or user removal based on the specified action type.
 //
-// actionType can be "leave" or "delete":
+// The actionType parameter accepts "leave" or "delete":
 // - "leave": Leave the room (any member can do this)
 // - "delete": Delete the room (only room creator can do this)
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/delete-rooms-room_id
 func (s *RoomsService) Delete(ctx context.Context, roomID int, actionType string) (*Response, error) {
 	u := fmt.Sprintf("rooms/%d", roomID)
-	
+
 	params := struct {
 		ActionType string `url:"action_type"`
 	}{
 		ActionType: actionType,
 	}
-	
+
 	req, err := s.client.NewFormRequest("DELETE", u, params)
 	if err != nil {
 		return nil, err
@@ -236,13 +235,13 @@ func (s *RoomsService) GetMessagesReadStatus(ctx context.Context, roomID int, me
 // ChatWork API docs: https://developer.chatwork.com/reference/put-rooms-room_id-messages-read
 func (s *RoomsService) MarkMessagesAsRead(ctx context.Context, roomID int, messageID string) (map[string]string, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/messages/read", roomID)
-	
+
 	params := struct {
 		MessageID string `url:"message_id"`
 	}{
 		MessageID: messageID,
 	}
-	
+
 	req, err := s.client.NewFormRequest("PUT", u, params)
 	if err != nil {
 		return nil, nil, err
@@ -283,12 +282,12 @@ func (s *RoomsService) GetMessagesUnreadCount(ctx context.Context, roomID int) (
 // If accountID is specified (non-zero), only files uploaded by that user are returned.
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-files
-func (s *RoomsService) GetFiles(ctx context.Context, roomID int, accountID int) ([]*File, *Response, error) {
+func (s *RoomsService) GetFiles(ctx context.Context, roomID, accountID int) ([]*File, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/files", roomID)
 	if accountID > 0 {
 		u += "?account_id=" + strconv.Itoa(accountID)
 	}
-	
+
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
@@ -309,12 +308,12 @@ func (s *RoomsService) GetFiles(ctx context.Context, roomID int, accountID int) 
 // Download URLs are valid for a limited time.
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-files-file_id
-func (s *RoomsService) GetFile(ctx context.Context, roomID int, fileID int, createDownloadURL bool) (*File, *Response, error) {
+func (s *RoomsService) GetFile(ctx context.Context, roomID, fileID int, createDownloadURL bool) (*File, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/files/%d", roomID, fileID)
 	if createDownloadURL {
 		u += "?create_download_url=1"
 	}
-	
+
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err
@@ -336,7 +335,7 @@ func (s *RoomsService) GetFile(ctx context.Context, roomID int, fileID int, crea
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-tasks
 func (s *RoomsService) GetTasks(ctx context.Context, roomID int, params *TaskListParams) ([]*Task, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/tasks", roomID)
-	
+
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, nil, err

@@ -67,7 +67,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: ['1.20', '1.21', '1.22']
+        go-version: ['1.21', '1.22', '1.23']
 
     steps:
     - name: Checkout code
@@ -77,6 +77,11 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
+
+    - name: Get dependencies
+      run: |
+        go mod download
+        go mod verify
 
     - name: Build
       run: go build -v ./...

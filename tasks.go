@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 // TasksService handles communication with the task related
@@ -58,7 +57,7 @@ func (s *TasksService) Create(ctx context.Context, roomID int, params *TaskCreat
 // Get returns information about a specific task.
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-tasks-task_id
-func (s *TasksService) Get(ctx context.Context, roomID int, taskID int) (*Task, *Response, error) {
+func (s *TasksService) Get(ctx context.Context, roomID, taskID int) (*Task, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/tasks/%d", roomID, taskID)
 	req, err := s.client.NewRequest("GET", u, nil)
 	if err != nil {
@@ -79,15 +78,15 @@ func (s *TasksService) Get(ctx context.Context, roomID int, taskID int) (*Task, 
 // Status can be "open" or "done".
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/put-rooms-room_id-tasks-task_id-status
-func (s *TasksService) UpdateStatus(ctx context.Context, roomID int, taskID int, status string) (*Task, *Response, error) {
+func (s *TasksService) UpdateStatus(ctx context.Context, roomID, taskID int, status string) (*Task, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/tasks/%d/status", roomID, taskID)
-	
+
 	params := struct {
 		Body string `url:"body"`
 	}{
 		Body: status,
 	}
-	
+
 	req, err := s.client.NewFormRequest("PUT", u, params)
 	if err != nil {
 		return nil, nil, err
@@ -105,14 +104,14 @@ func (s *TasksService) UpdateStatus(ctx context.Context, roomID int, taskID int,
 // Complete marks a task as completed.
 //
 // This is a convenience method that calls UpdateStatus with status "done".
-func (s *TasksService) Complete(ctx context.Context, roomID int, taskID int) (*Task, *Response, error) {
+func (s *TasksService) Complete(ctx context.Context, roomID, taskID int) (*Task, *Response, error) {
 	return s.UpdateStatus(ctx, roomID, taskID, "done")
 }
 
 // Reopen marks a task as open (not completed).
 //
 // This is a convenience method that calls UpdateStatus with status "open".
-func (s *TasksService) Reopen(ctx context.Context, roomID int, taskID int) (*Task, *Response, error) {
+func (s *TasksService) Reopen(ctx context.Context, roomID, taskID int) (*Task, *Response, error) {
 	return s.UpdateStatus(ctx, roomID, taskID, "open")
 }
 
@@ -227,7 +226,7 @@ func (s *MyTasksService) GetByRoom(ctx context.Context, roomID int) ([]*MyTask, 
 // CompleteTask marks a task as completed.
 //
 // This is a convenience method that uses the Tasks service to complete a task.
-func (s *MyTasksService) CompleteTask(ctx context.Context, roomID int, taskID int) (*Task, *Response, error) {
+func (s *MyTasksService) CompleteTask(ctx context.Context, roomID, taskID int) (*Task, *Response, error) {
 	tasksService := (*TasksService)(&s.client.common)
 	return tasksService.Complete(ctx, roomID, taskID)
 }
@@ -235,7 +234,7 @@ func (s *MyTasksService) CompleteTask(ctx context.Context, roomID int, taskID in
 // ReopenTask marks a task as open (not completed).
 //
 // This is a convenience method that uses the Tasks service to reopen a task.
-func (s *MyTasksService) ReopenTask(ctx context.Context, roomID int, taskID int) (*Task, *Response, error) {
+func (s *MyTasksService) ReopenTask(ctx context.Context, roomID, taskID int) (*Task, *Response, error) {
 	tasksService := (*TasksService)(&s.client.common)
 	return tasksService.Reopen(ctx, roomID, taskID)
 }
