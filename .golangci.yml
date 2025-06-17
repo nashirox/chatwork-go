@@ -28,7 +28,7 @@ linters:
     - noctx
     - rowserrcheck
     - stylecheck
-    - exportloopref
+    - copyloopvar
     - goconst
     - godot
     - asciicheck
@@ -50,8 +50,8 @@ linters-settings:
   gofmt:
     simplify: true
   govet:
-    # check-shadowing is deprecated, use shadow instead
-    shadow: true
+    # Use default configuration for govet
+    # The shadow analyzer is not configured as it can be noisy
   errcheck:
     check-type-assertions: true
     check-blank: true
@@ -78,14 +78,6 @@ linters-settings:
     capital: true
 
 issues:
-  exclude-rules:
-    # Exclude some linters from running on tests files.
-    - path: _test\.go
-      linters:
-        - errcheck
-        - gosec
-        - unparam
-
   # Maximum issues count per one linter. Set to 0 to disable.
   max-issues-per-linter: 0
 
