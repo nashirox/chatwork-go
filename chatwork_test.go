@@ -7,8 +7,10 @@ import (
 	"testing"
 )
 
+const testToken = "test-token"
+
 func TestNew(t *testing.T) {
-	token := "test-token"
+	token := testToken
 	client := New(token)
 
 	if client.token != token {
@@ -25,7 +27,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestNewWithOptions(t *testing.T) {
-	token := "test-token"
+	token := testToken
 	customHTTPClient := &http.Client{}
 
 	client := New(token, OptionHTTPClient(customHTTPClient))
@@ -36,7 +38,7 @@ func TestNewWithOptions(t *testing.T) {
 }
 
 func TestNewRequest(t *testing.T) {
-	client := New("test-token")
+	client := New(testToken)
 
 	req, err := client.NewRequest("GET", "test", nil)
 	if err != nil {
@@ -52,7 +54,7 @@ func TestNewRequest(t *testing.T) {
 		t.Errorf("Expected URL %s, got %s", expectedURL, req.URL.String())
 	}
 
-	if req.Header.Get("X-ChatWorkToken") != "test-token" {
+	if req.Header.Get("X-ChatWorkToken") != testToken {
 		t.Error("X-ChatWorkToken header not set correctly")
 	}
 
@@ -111,7 +113,7 @@ func TestCheckResponse(t *testing.T) {
 	}
 }
 
-func TestErrorResponse_Error(t *testing.T) {
+func TestAPIError_Error(t *testing.T) {
 	resp := &http.Response{
 		StatusCode: http.StatusBadRequest,
 		Request: &http.Request{
@@ -120,7 +122,7 @@ func TestErrorResponse_Error(t *testing.T) {
 		},
 	}
 
-	err := &ErrorResponse{
+	err := &APIError{
 		Response: resp,
 		Errors:   []string{"Invalid parameters", "Room name is required"},
 	}

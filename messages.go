@@ -179,7 +179,7 @@ func (s *MessagesService) SendTo(ctx context.Context, roomID int, accountIDs []i
 // Reply sends a reply to a specific message.
 //
 // This creates a threaded conversation by linking the new message to the original.
-func (s *MessagesService) Reply(ctx context.Context, roomID int, messageID string, body string) (*MessageCreatedResponse, *Response, error) {
+func (s *MessagesService) Reply(ctx context.Context, roomID int, messageID, body string) (*MessageCreatedResponse, *Response, error) {
 	params := &MessageCreateParams{
 		Body: fmt.Sprintf("[rp aid=%s] %s", messageID, body),
 	}
@@ -190,7 +190,7 @@ func (s *MessagesService) Reply(ctx context.Context, roomID int, messageID strin
 //
 // This fetches the original message and includes it in a quote block
 // before the new message body.
-func (s *MessagesService) Quote(ctx context.Context, roomID int, messageID string, body string) (*MessageCreatedResponse, *Response, error) {
+func (s *MessagesService) Quote(ctx context.Context, roomID int, messageID, body string) (*MessageCreatedResponse, *Response, error) {
 	// First, fetch the message to quote
 	message, _, err := s.Get(ctx, roomID, messageID)
 	if err != nil {

@@ -282,7 +282,7 @@ func (s *RoomsService) GetMessagesUnreadCount(ctx context.Context, roomID int) (
 // If accountID is specified (non-zero), only files uploaded by that user are returned.
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-files
-func (s *RoomsService) GetFiles(ctx context.Context, roomID int, accountID int) ([]*File, *Response, error) {
+func (s *RoomsService) GetFiles(ctx context.Context, roomID, accountID int) ([]*File, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/files", roomID)
 	if accountID > 0 {
 		u += "?account_id=" + strconv.Itoa(accountID)
@@ -308,7 +308,7 @@ func (s *RoomsService) GetFiles(ctx context.Context, roomID int, accountID int) 
 // Download URLs are valid for a limited time.
 //
 // ChatWork API docs: https://developer.chatwork.com/reference/get-rooms-room_id-files-file_id
-func (s *RoomsService) GetFile(ctx context.Context, roomID int, fileID int, createDownloadURL bool) (*File, *Response, error) {
+func (s *RoomsService) GetFile(ctx context.Context, roomID, fileID int, createDownloadURL bool) (*File, *Response, error) {
 	u := fmt.Sprintf("rooms/%d/files/%d", roomID, fileID)
 	if createDownloadURL {
 		u += "?create_download_url=1"
