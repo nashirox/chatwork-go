@@ -3,8 +3,6 @@ package chatwork
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"strconv"
 )
 
 // MessagesService handles communication with the message related

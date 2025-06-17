@@ -78,6 +78,11 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
 
+    - name: Get dependencies
+      run: |
+        go mod download
+        go mod verify
+
     - name: Build
       run: go build -v ./...
 

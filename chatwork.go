@@ -199,7 +199,7 @@ func (c *Client) NewFormRequest(method, urlStr string, body interface{}) (*http.
 		return nil, err
 	}
 
-	var buf io.ReadWriter
+	var buf io.Reader
 	if body != nil {
 		form, err := query.Values(body)
 		if err != nil {
